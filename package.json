@@ -1,0 +1,29 @@
+{
+  "name": "bookipi-test",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "start": "turbo start",
+    "lint": "turbo lint",
+    "format": "turbo format",
+    "check-types": "turbo run check-types",
+    "test": "turbo test",
+    "test:e2e": "turbo test:e2e"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.14",
+    "@types/bun": "latest",
+    "turbo": "^2.8.3",
+    "@repo/ts-config": "workspace:*",
+    "@repo/biome-config": "workspace:*"
+  },
+  "peerDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "packageManager": "bun@1.3.8",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "extends": "../ts-config/nestapi.json",
+  "compilerOptions": {
+    "ignoreDeprecations": "6.0",
+    "allowJs": true,
+    "incremental": false,
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
+}

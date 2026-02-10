@@ -1,0 +1,24 @@
+{
+  "root": false,
+  "extends": ["./base"],
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double"
+    },
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.controller.ts", "**/*.service.ts", "**/*.module.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useImportType": "off"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "extends": "@repo/ts-config/nodeworker.json",
+  "compilerOptions": {
+    "paths": {
+      "@repo/shared/*": ["../../packages/shared/src/*"],
+      "@/*": ["./src/*"]
+    },
+    "baseUrl": ".",
+    "outDir": "./dist",
+    "allowImportingTsExtensions": true,
+    "types": ["jest"],
+    "noEmit": true
+  },
+  "include": ["./src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.json"]
+}
