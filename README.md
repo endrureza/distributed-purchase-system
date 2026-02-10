@@ -138,21 +138,62 @@ Once stock is exhausted:
 
 ### Design Decisions
 
-#### Redis for admission control
+#### Redis for concurrency control
 
-Ensures atomic purchase validation and prevents overselling.
+Redis is used as the admission layer to enforce stock limits and one-purchase-per-user using atomic operations.
 
-#### Queue + worker pattern
+**Why**
 
-Removes database writes from the request path and improves resilience under load.
+* Extremely Fast
+* Prevent overselling under high concurrency
+* Keeps API response time low
 
-#### Idempotent worker
+**Trade-off**
 
-Prevents duplicate purchase records even if jobs are retried.
+* Redis becomes a critical dependency
+* Requires persistance config in production
+
+#### Queue + worker persistence
+
+The API enqueues purchase jobs instead of writing directly to the database.
+
+**Why**
+
+* Prevents database bottlenecks during traffic spikes
+* Provides retry safety
+* Improves system resilience
+
+**Trade-off**
+
+* Eventual consistency between API response and database state
+* Slightly more system complexity
+
+#### Idempotent worker design
+
+The worker rechecks purchase constraints before writing to the database.
+
+**Why**
+
+* Protects against duplicate job execution
+* Ensures correctness during retries
+
+**Trade-off**
+
+* Additional database checks
+* Slightly more logic in worker
 
 #### Stateless API
 
-Allows horizontal scaling of API instances.
+The API does not store purchase state locally.
+
+**Why**
+
+* Allows horizontal scaling
+* Keeps request handling fast
+
+**Trade-off**
+
+* Requires Redis and queue infrastructure
 
 ### Future Improvements
 
