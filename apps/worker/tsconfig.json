@@ -8,7 +8,6 @@
     "baseUrl": ".",
     "outDir": "./dist",
     "allowImportingTsExtensions": true,
-    "types": ["jest"],
     "noEmit": true
   },
   "include": ["./src/**/*"],

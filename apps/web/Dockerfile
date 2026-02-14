@@ -1,37 +1,45 @@
 FROM oven/bun:1.3.8 AS base
 WORKDIR /app
 
-# -----------------------------
-# Install dependencies (cached)
-# -----------------------------
-FROM base AS install
-
-# Copy workspace metadata
-COPY package.json bun.lock ./
-COPY apps ./apps
-COPY packages ./packages
-COPY turbo.json ./
-
-RUN bun install --frozen-lockfile
-
-# -----------------------------
-# Build
-# -----------------------------
-FROM base AS prerelease
-WORKDIR /app
-
-COPY --from=install /app/node_modules ./node_modules
+FROM base AS prepare
+RUN bun add -g turbo
 COPY . .
 
-ENV NODE_ENV=production
-RUN bun run build --filter=web
+ARG API_URL
+ARG NEXT_PUBLIC_API_URL
+
+ENV API_URL=${API_URL}
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+
+RUN turbo prune web --docker
+
+FROM base AS builder
+COPY --from=prepare /app/out/json .
+RUN bun install
+COPY --from=prepare /app/out/full .
+
+ARG API_URL
+ARG NEXT_PUBLIC_API_URL
+
+ENV API_URL=${API_URL}
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+
+RUN bun turbo build --filter=web
 
 # -----------------------------
 # Runtime
 # -----------------------------
-FROM base AS release
+FROM base AS runner
 WORKDIR /app
 
-COPY --from=prerelease /app ./
+COPY --from=builder /app ./
 
-CMD ["sh", "-c", "bun run --cwd apps/web start"]
+WORKDIR /app/apps/web
+
+ARG API_URL
+ARG NEXT_PUBLIC_API_URL
+
+ENV API_URL=${API_URL}
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+
+CMD ["bun", "run", "start"]

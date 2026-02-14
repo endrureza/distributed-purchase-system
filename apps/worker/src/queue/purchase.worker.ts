@@ -1,19 +1,21 @@
-import type { PrismaClient } from "../generated/prisma/client.js";
+import "dotenv/config";
+import { eq } from "drizzle-orm";
+import { purchasesTable } from "../db/schema.js";
 
-export async function PurchaseProcessor(prisma: PrismaClient, userId: string) {
-	return prisma.$transaction(async (tx) => {
-		const existing = await prisma.purchase.findUnique({
-			where: { userId },
-		});
+export async function PurchaseProcessor(db: any, userId: string) {
+  return db.transaction(async (tx) => {
+    const existing = await tx
+      .select()
+      .from(purchasesTable)
+      .where(eq(purchasesTable.userId, userId))
+      .limit(1);
 
-		if (existing) {
-			return { status: "ALREADY_PURCHASED" };
-		}
+    if (existing.length > 0) {
+      return { status: "ALREADY_PURCHASED" };
+    }
 
-		await tx.purchase.create({
-			data: { userId },
-		});
+    await tx.insert(purchasesTable).values({ userId });
 
-		return { status: "CONFIRMED" };
-	});
+    return { status: "CONFIRMED" };
+  });
 }

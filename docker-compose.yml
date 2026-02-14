@@ -39,6 +39,12 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@pg:5432/flashsale
     networks:
       - app_network
+    command: >
+      sh -c "
+      bun run db:generate &&
+      bun run db:migrate &&
+      bun run start
+      "
     depends_on:
       - pg
       - redis
@@ -67,14 +73,15 @@ services:
     build:
       context: .
       dockerfile: ./apps/web/Dockerfile
+      args:
+        - API_URL=http://api:3001
+        - NEXT_PUBLIC_API_URL=http://api:3001
     restart: always
     ports:
       - "3000:3000"
     environment:
       - PORT=3000
       - NODE_ENV=production
-      - API_URL=http://api:3001
-      - NEXT_PUBLIC_API_URL=http://api:3001
     networks:
       - app_network
     depends_on:

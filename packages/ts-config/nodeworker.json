@@ -19,6 +19,6 @@
     "lib": ["es2022"],
     "verbatimModuleSyntax": true,
     "noImplicitOverride": true,
-    "types": ["node"]
+    "types": ["node", "jest"]
   }
 }
