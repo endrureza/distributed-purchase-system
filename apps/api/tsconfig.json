@@ -1,0 +1,12 @@
+{
+	"extends": "@repo/ts-config/nestapi.json",
+	"compilerOptions": {
+		"paths": {
+			"@/*": ["./src/*"]
+		},
+		"baseUrl": ".",
+		"outDir": "dist",
+		"types": ["jest"]
+	},
+	"exclude": ["dist", "build", "node_modules"]
+}
